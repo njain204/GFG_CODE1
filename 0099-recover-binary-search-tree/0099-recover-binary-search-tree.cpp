@@ -1,20 +1,41 @@
 class Solution {
+private: 
+    TreeNode* first;
+    TreeNode* prev;
+    TreeNode* middle;
+    TreeNode* last; 
+private: 
+    void inorder(TreeNode* root) {
+        if(root == NULL) return; 
+        
+        inorder(root->left);
+        
+        if (prev != NULL && (root->val < prev->val))
+        {
+           
+            // If this is first violation, mark these two nodes as
+            // 'first' and 'middle'
+            if ( first == NULL )
+            {
+                first = prev;
+                middle = root;
+            }
+ 
+            // If this is second violation, mark this node as last
+            else
+                last = root;
+        }
+ 
+        // Mark this node as previous
+        prev = root;
+        inorder(root->right); 
+    }
 public:
-	TreeNode* firstMistake, *secondMistake, *pre;
-	void recoverTree(TreeNode* root) {
-		pre = new TreeNode(INT_MIN);
-		inorder(root);
-		swap(firstMistake->val, secondMistake->val);
-	}
-	void inorder(TreeNode* root) {
-		if(root == nullptr) 
-			return;
-		inorder(root->left);
-		if(firstMistake == nullptr && root->val < pre->val)
-			firstMistake = pre;
-		if(firstMistake != nullptr && root->val < pre->val)
-			secondMistake = root;
-		pre = root;
-		inorder(root->right);
-	}
+    void recoverTree(TreeNode* root) {
+        first = middle = last = NULL; 
+        prev = new TreeNode(INT_MIN); 
+        inorder(root);
+        if(first && last) swap(first->val, last->val); 
+        else if(first && middle) swap(first->val, middle->val); 
+    }
 };
